@@ -67,6 +67,10 @@
         	<property name="maxUploadSize" value="100000" />
  
     	</bean>
+    	
+    	<bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+		 
+		</bean>
     	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>  
     	
     	<!-- jee:jndi-lookup is required for JPA and Persistence.xml configuration -->
