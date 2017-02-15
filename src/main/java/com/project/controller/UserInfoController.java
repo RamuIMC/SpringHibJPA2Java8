@@ -28,7 +28,7 @@ public class UserInfoController {
 		UserDto userDto = new UserDto();
 		User user= userDao.getUserById(userId);
 		
-		ClientConfig clientConfig = new ClientConfig();
+		/*ClientConfig clientConfig = new ClientConfig();
 		ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 		networkConfig.addAddress("192.168.100.5");
 		
@@ -39,7 +39,7 @@ public class UserInfoController {
         map.put( 2, "Ali" );
         map.put( 3, "Avi" );
        
-        System.out.println( "Map Size:" + map.size() );
+        System.out.println( "Map Size:" + map.size() );*/
 		
 		userDto.setUserId(user.getId());
 		userDto.setUserName(user.getUserName());

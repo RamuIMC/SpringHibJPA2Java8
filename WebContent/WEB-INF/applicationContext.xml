@@ -9,6 +9,7 @@
     xmlns:mvc="http://www.springframework.org/schema/mvc"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
     xmlns:security="http://www.springframework.org/schema/security"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
@@ -18,36 +19,38 @@
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd 
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
         
-        <mvc:resources mapping="/resources/**" location="/resources/" />
- 
-   
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+
     <context:annotation-config />
     <context:component-scan base-package="com.project.dao" />
+    
    <beans profile = "development">
    
-     	<!-- <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >     	
+     	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >     	
 	     	<property name="locations">
 				<list>
 					<value>classpath:development-jdbc.properties</value>
-					<value>classpath:application.properties</value>
 				</list>
 			</property>
 			<property name="ignoreUnresolvablePlaceholders" value="true"/>			
-		</bean> -->
+		</bean> 	
 		
-      	<!-- <bean id="jndiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-    		<property name="jndiName" value="java:/MySqlDS" />
-    		<property name="resourceRef" value="true" /> 
-		</bean> -->  
-		
-      	<!--  <bean id="entityManagerFactoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-      	
-      		<property name="persistenceXmlLocation" value="classpath:config/persistence.xml" />
-        	<property name="packagesToScan" value="com.project.model.*" />
-        	<property name="persistenceUnitName" value="demoRestPersistence" />
-        	<property name="dataSource" ref="jndiDataSource" /> 
+		<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		    <property name="jndiName" value="java:/MySqlDS" />
+		</bean>	
+		<!-- <bean id="dataSource2" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >      	
+	      	<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	        <property name="url" value="jdbc:mysql://localhost:3306/awsmaven_db" />
+	        <property name="username" value="root" />
+	        <property name="password" value="root" />      	
+      	</bean> -->
+			
+      	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"  >      	
+      		<property name="packagesToScan" value="com.project.model" />
+        	<property name="dataSource" ref="dataSource" /> 
         	<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
         	<property name="jpaProperties">
 			    <props>
@@ -55,12 +58,12 @@
 			    </props>
 			  </property>
         	
-    	</bean>  -->
+    	</bean>  
     	
-    	<!-- <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+    	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 			  <property name="showSql" value="true"/>
 			  <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"/>
-		</bean> --> 
+		</bean>   
     
     	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
          <!-- setting maximum upload size -->
@@ -68,19 +71,77 @@
  
     	</bean>
     	
-    	<bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+    	<!-- <bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance" /> -->
 		 
-		</bean>
-    	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>  
+    	<!-- <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/> -->  
     	
     	<!-- jee:jndi-lookup is required for JPA and Persistence.xml configuration -->
-    	<jee:jndi-lookup id="dbPersistence1" jndi-name="java:/MyEntityManagerFactory" />
+    	<!-- <jee:jndi-lookup id="datasource2" jndi-name="java:/MyEntityManagerFactory" />   -->
   
         <tx:annotation-driven/> 
         
         <!-- <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>   -->
     	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-      		<property name="entityManagerFactory" ref="dbPersistence1" />
+      		<!-- <property name="entityManagerFactory" ref="dbPersistence1" /> -->
+      		<property name="entityManagerFactory" ref="entityManagerFactory" />
+  		</bean>  
+  		
+  		<jpa:repositories base-package="com.project.repositories" entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"></jpa:repositories>
+    	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+			<tx:attributes>
+				<tx:method name="find*" read-only="true" />
+				<tx:method name="*" />
+			</tx:attributes>
+		</tx:advice>
+ 
+	</beans>
+	<beans profile = "production">	
+		<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >     	
+	     	<property name="locations">
+				<list>
+					<value>classpath:production-jdbc.properties</value>
+				</list>
+			</property>
+			<property name="ignoreUnresolvablePlaceholders" value="true"/>			
+		</bean> 	
+		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+	      	<property name="driverClassName" value="${jdbc.driverClassName}" />
+	        <property name="url" value="${jdbc.databaseurl}" />
+	        <property name="username" value="${jdbc.username}" />
+	        <property name="password" value="${jdbc.password}" />      	
+      	</bean> 			
+      	<bean id="entityManagerFactory2" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">      	
+      		<property name="packagesToScan" value="com.project.model" />
+        	<property name="dataSource" ref="dataSource" /> 
+        	<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+        	<property name="jpaProperties">
+			    <props>
+			      <prop key="hibernate.show_sql">true</prop>
+			    </props>
+			  </property>        	
+    	</bean>  
+    	
+    	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+			  <property name="showSql" value="true"/>
+			  <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"/>
+		</bean>  
+    
+    	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+         <!-- setting maximum upload size -->
+        	<property name="maxUploadSize" value="100000" />
+ 
+    	</bean>		 
+    	<!-- <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/> -->  
+    	
+    	<!-- jee:jndi-lookup is required for JPA and Persistence.xml configuration -->
+    	<!-- <jee:jndi-lookup id="dbPersistence1" jndi-name="java:/MyEntityManagerFactory" /> -->
+  
+        <tx:annotation-driven/> 
+        
+        <!-- <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>   -->
+    	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      		<!-- <property name="entityManagerFactory" ref="dbPersistence1" /> -->
+      		<property name="entityManagerFactory" ref="entityManagerFactory2" />
   		</bean>  
     	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 			<tx:attributes>
@@ -90,97 +151,5 @@
 		</tx:advice>
  
 	</beans>
-	<beans profile = "production">
 	
-    	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        	<property name="basenames" value="classpath:messages" />
-        	<property name="defaultEncoding" value="UTF-8" />
-    	</bean> 
-	
-     	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  p:location="/WEB-INF/production-jdbc.properties" />
-        
-      	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-      	p:driverClassName="${jdbc.driverClassName}"
-        p:url="${jdbc.databaseurl}" p:username="${jdbc.username}"
-        p:password="${jdbc.password}" />   
-        
-      	<bean id="entityManagerFactoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        	<property name="dataSource" ref="dataSource" />
-        	<property name="packagesToScan" value="com.project.model" />
-        	<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-        	<property name="jpaProperties">
-			    <props>
-			      <prop key="hibernate.show_sql">true</prop>
-			      <prop key="hibernate.hbm2dll.auto">create</prop>
-			    </props>
-			  </property>
-    	</bean>   
-    	
-    	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-			  <property name="showSql" value="true"/>
-			  <property name="generateDdl" value="true"/>
-			  <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"/>
-		</bean>
-    
-    	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-         <!-- setting maximum upload size -->
-        	<property name="maxUploadSize" value="100000" />
- 
-    	</bean>
-  
-        <tx:annotation-driven transaction-manager="transactionManager"/>  
-    	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-      		<property name="entityManagerFactory" ref="entityManagerFactoryBean" />
-  		</bean>
-    	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-			<tx:attributes>
-				<tx:method name="find*" read-only="true" />
-				<tx:method name="*" />
-			</tx:attributes>
-		</tx:advice>
- 
-	</beans>
-	<!-- <beans profile = "production">
-	
-    	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        	<property name="basenames" value="classpath:messages" />
-        	<property name="defaultEncoding" value="UTF-8" />
-    	</bean> 
-	
-     	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  p:location="/WEB-INF/production-jdbc.properties" />
-        
-      	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-      	p:driverClassName="${jdbc.driverClassName}"
-        p:url="${jdbc.databaseurl}" p:username="${jdbc.username}"
-        p:password="${jdbc.password}" />   
-        
-      	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        	<property name="dataSource" ref="dataSource" />
-        	<property name="packagesToScan" value="com.project.model" />
-        	<property name="hibernateProperties">
-            	<props>
-                	<prop key="hibernate.dialect">${jdbc.dialect}</prop>
-                	<prop key="hibernate.show_sql">true</prop>
-            	</props>
-        	</property>
-    	</bean>   
-    
-    	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-         setting maximum upload size
-        	<property name="maxUploadSize" value="100000" />
- 
-    	</bean>
-  
-        <tx:annotation-driven transaction-manager="transactionManager"/>  
-    	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        	<property name="sessionFactory" ref="sessionFactory" />
-    	</bean>
-    	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-			<tx:attributes>
-				<tx:method name="find*" read-only="true" />
-				<tx:method name="*" />
-			</tx:attributes>
-		</tx:advice>
- 
-	</beans> --> 
 </beans>

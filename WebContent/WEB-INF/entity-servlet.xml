@@ -56,9 +56,9 @@
 		  </constructor-arg>
 		</bean> -->
 		
-		<bean id="map" factory-bean="instance" factory-method="getMap">
+		<!-- <bean id="map" factory-bean="instance" factory-method="getMap">
 		  <constructor-arg value="map"/>
-		</bean>
+		</bean> -->
    		
     	
     	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

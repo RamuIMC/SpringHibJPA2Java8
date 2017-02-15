@@ -1,16 +1,14 @@
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-   <persistence-unit name="dbPersistence1">
-      <provider>org.hibernate.ejb.HibernatePersistence</provider>
-      <!-- Datasource created in JBOSS Application server -->
-      <jta-data-source>java:/MySqlDS</jta-data-source>
-      <properties>
-         <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-            <property name="hibernate.show_sql" value="true" />
-             <!-- jboss.entity.manager.factory.jndi.name is mandatory for JPA EntityManagerFactory -->
-            <property name="jboss.entity.manager.factory.jndi.name" value="java:/MyEntityManagerFactory"/>
-    </properties>        
-   </persistence-unit>
-
-   
+<?xml version="1.0"?>
+<persistence xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+	<persistence-unit name="demoRestPersistence">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:/MySqlDS</jta-data-source>
+		<properties>	
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>		
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>		
+			<property name="hibernate.show_sql" value="true"/>		
+			<property name="jboss.entity.manager.factory.jndi.name" value="java:/MyEntityManagerFactory"/>	
+		</properties>
+	</persistence-unit>
 </persistence>
