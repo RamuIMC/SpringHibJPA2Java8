@@ -11,6 +11,6 @@ import com.project.model.User;
  */
 public interface UserDao{
 	
-	public User getUserById(Integer userId);
+	public User getUserByName(String userName);
 
 }

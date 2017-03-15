@@ -3,17 +3,12 @@
  */
 package com.project.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
+import com.project.dto.UserDto;
 import com.project.model.User;
 import com.project.repositories.UserRepository;
 import com.project.specification.UserSpecification;
@@ -32,14 +27,12 @@ public class UserDaoImpl implements UserDao{
 	UserRepository userRepository;
 
 	@Override
-	public User getUserById(Integer userId) {
+	public User getUserByName(String userName) {
 		
 		
-		User user = new User();
-		
-		user.setUserName("mramu");
-		Specification<User> sp = new UserSpecification(user);
-		
+		User user = new User();		
+		user.setUserName(userName);
+		Specification<User> sp = new UserSpecification(user);		
 		User user2 = userRepository.findOne(sp);
 		System.out.println("User name :: "+user2.getFirstName());
 				
@@ -49,7 +42,7 @@ public class UserDaoImpl implements UserDao{
 		
 		User user = users.stream().findFirst().get();*/
 		
-		return null;
+		return user2;
 	}
 
 }

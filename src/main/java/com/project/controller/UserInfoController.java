@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hazelcast.client.HazelcastClient;
@@ -22,11 +23,36 @@ public class UserInfoController {
 	@Autowired
 	UserDao userDao;
 	
-	@RequestMapping(value="/getuser/{id}",method=RequestMethod.GET)
+	/*@RequestMapping(value="/getuser/{id}",method=RequestMethod.GET)
 	public UserDto getUserById(@PathVariable("id") int userId ){
 		
 		UserDto userDto = new UserDto();
-		User user= userDao.getUserById(userId);
+		User user= userDao.getUserByName(userId);
+		
+		ClientConfig clientConfig = new ClientConfig();
+		ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
+		networkConfig.addAddress("192.168.100.5");
+		
+		HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
+        IMap map = client.getMap("customers");
+        System.out.println( "Map Size:" + map.size() );
+        map.put( 1, "Joe" );
+        map.put( 2, "Ali" );
+        map.put( 3, "Avi" );
+       
+        System.out.println( "Map Size:" + map.size() );
+		
+		userDto.setUserId(user.getId());
+		userDto.setUserName(user.getUserName());
+		
+	return userDto;
+	
+	}*/
+	@RequestMapping(value="/getuser",method=RequestMethod.GET)
+	public UserDto getUserByName(@RequestParam String userName ){
+		
+		UserDto userDto = new UserDto();
+		User user= userDao.getUserByName(userName);
 		
 		/*ClientConfig clientConfig = new ClientConfig();
 		ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();

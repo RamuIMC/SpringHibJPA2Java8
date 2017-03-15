@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:sec="http://www.springframework.org/schema/security"	 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+	  http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+ <mvc:annotation-driven />
+ <sec:http auto-config="true" use-expressions="true" authentication-manager-ref="authenticationManager">
+ 	<sec:intercept-url pattern="/webServices/**"/>
+ 	<sec:form-login authentication-success-handler-ref="customAuthenticationSuccessHandler" 
+ 	authentication-failure-handler-ref="customAuthenticationFailureHandler"/>
+ 	<sec:csrf disabled="true"/>
+ </sec:http>
+ <sec:global-method-security pre-post-annotations="enabled"/>
+ 
+ <bean id="customAuthenticationSuccessHandler" class="com.project.security.CustomAuthenticationSuccessHandler"/>
+ <bean id="customAuthenticationFailureHandler" class="com.project.security.CustomAuthenticationFailureHandler"/>
+ <bean id="customUserDetailsService" class="com.project.security.CustomUserDetailsService"/>
+ 
+ <sec:authentication-manager alias="authenticationManager">
+	 <sec:authentication-provider user-service-ref="customUserDetailsService">
+	 </sec:authentication-provider>
+ </sec:authentication-manager>
+ 
+ 
+ </beans>
+	 
