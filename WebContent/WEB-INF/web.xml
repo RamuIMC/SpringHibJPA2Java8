@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>AngularJSProj</display-name>
  
-  <listener>
+  	<listener>
 	    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
     <context-param>
@@ -23,10 +23,20 @@
         <filter-class>
           org.springframework.web.filter.DelegatingFilterProxy
         </filter-class>
-      </filter>
-      <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-      </filter-mapping>
+     </filter>
+     <filter-mapping>
+       <filter-name>springSecurityFilterChain</filter-name>
+       <url-pattern>/*</url-pattern>
+     </filter-mapping>
+	  <filter>
+	        <filter-name>tokenValidationFilter</filter-name>
+	        <filter-class>
+	          com.project.security.TokenValidationFilter
+	        </filter-class>
+	      </filter>
+	      <filter-mapping>
+	        <filter-name>tokenValidationFilter</filter-name>
+	        <url-pattern>/test/*</url-pattern>
+	      </filter-mapping>
        
 </web-app>

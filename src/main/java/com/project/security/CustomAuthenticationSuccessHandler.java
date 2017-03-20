@@ -6,22 +6,31 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.google.gson.Gson;
+import com.project.dto.UserDto;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
+	
+	@Autowired
+	JwtConfiguration jwtConfiguration;
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication arg2)
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
 			throws IOException, ServletException {
-		StatusMessageDto statusMessageDto = new StatusMessageDto();
+		/*StatusMessageDto statusMessageDto = new StatusMessageDto();
 		
 		statusMessageDto.setStatus(HttpServletResponse.SC_OK);
-		statusMessageDto.setMessage("Authentication has been successful");
+		statusMessageDto.setMessage("Authentication has been successful");*/
+		UserDto userDto = new UserDto();
 		
-		String json = new Gson().toJson(statusMessageDto);		
+		userDto.setUserName(auth.getName());
+		String token = jwtConfiguration.createToken(userDto);
+		userDto.setToken(token);
+		String json = new Gson().toJson(userDto);		
 		response.getWriter().print(json);
 		
 	}

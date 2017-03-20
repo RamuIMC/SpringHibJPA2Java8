@@ -15,6 +15,14 @@ xmlns:sec="http://www.springframework.org/schema/security"
  </sec:http>
  <sec:global-method-security pre-post-annotations="enabled"/>
  
+ <bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+  	<sec:filter-chain-map request-matcher="ant">
+     <sec:filter-chain pattern="/test/**" filters="tokenValidationFilter" />
+    </sec:filter-chain-map>
+ </bean>
+ 
+ <bean id="tokenValidationFilter" class="com.project.security.TokenValidationFilter" />
+ 
  <bean id="customAuthenticationSuccessHandler" class="com.project.security.CustomAuthenticationSuccessHandler"/>
  <bean id="customAuthenticationFailureHandler" class="com.project.security.CustomAuthenticationFailureHandler"/>
  <bean id="customUserDetailsService" class="com.project.security.CustomUserDetailsService"/>

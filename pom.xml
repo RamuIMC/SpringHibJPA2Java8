@@ -208,7 +208,11 @@
 		    <artifactId>gson</artifactId>
 		    <version>2.7</version>
 		</dependency>										
-        
+        <dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.6.0</version>
+		</dependency>
         
   </dependencies>
   

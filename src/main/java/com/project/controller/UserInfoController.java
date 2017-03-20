@@ -18,6 +18,7 @@ import com.project.model.User;
 
 
 @RestController
+@RequestMapping("/test")
 public class UserInfoController {
 	
 	@Autowired
@@ -48,7 +49,7 @@ public class UserInfoController {
 	return userDto;
 	
 	}*/
-	@RequestMapping(value="/getuser",method=RequestMethod.GET)
+	@RequestMapping(value="/test/getuser",method=RequestMethod.GET)
 	public UserDto getUserByName(@RequestParam String userName ){
 		
 		UserDto userDto = new UserDto();
